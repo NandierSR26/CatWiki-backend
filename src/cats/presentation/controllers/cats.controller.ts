@@ -12,7 +12,8 @@ export class CatsController {
 
     getBreeds = async (req: any, res: any): Promise<void> => {
         try {
-            const breeds = await this.getBreedsUseCase.execute();
+            const { page = 1, limit = 10 } = req.query;
+            const breeds = await this.getBreedsUseCase.execute(Number(page), Number(limit));
             res.status(200).json(breeds);
         } catch (error) {
             console.error('Error getting breeds:', error);

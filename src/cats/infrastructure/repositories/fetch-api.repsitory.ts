@@ -10,8 +10,8 @@ export class FetchAPIRepository implements CatRepository {
         this.apiUrl = apiUrl;
         this.apiKey = apiKey;
     }
-    async get(): Promise<CatProps[]> {
-        const response = await fetch(`${this.apiUrl}/breeds`, {
+    async get(page: number, limit: number): Promise<CatProps[]> {
+        const response = await fetch(`${this.apiUrl}/breeds?page=${page}&limit=${limit}`, {
             headers: {
                 'x-api-key': this.apiKey
             }
