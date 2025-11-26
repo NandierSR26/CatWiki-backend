@@ -11,7 +11,7 @@ export class FetchImageAPIRepository implements ImageRepository {
     }
 
     async getImagesByBreedId(breedId: string): Promise<ImageProps[]> {
-        const response = await fetch(`${this.apiUrl}/images/search?breed_ids=${breedId}&limit=10`, {
+        const response = await fetch(`${this.apiUrl}/images/search?breed_ids=${breedId}&limit=20`, {
             headers: {
                 'x-api-key': this.apiKey
             }

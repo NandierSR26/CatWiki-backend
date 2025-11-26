@@ -1,6 +1,6 @@
 import express, { Router } from "express";
-import { DatabaseConfig } from './config/database.config.js';
-import { AppConfig } from './config/app.config.js';
+import { DatabaseConfig } from "./config/database.config.js";
+import { AppConfig } from "./config/app.config.js";
 
 interface ServerOptions {
   port: number;
@@ -23,6 +23,25 @@ export class Server {
     // Validate configuration
     AppConfig.validate();
 
+    // CORS
+    this.app.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS"
+      );
+      res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      );
+
+      if (req.method === "OPTIONS") {
+        res.sendStatus(200);
+      } else {
+        next();
+      }
+    });
+
     // Connect to database
     await DatabaseConfig.connect(AppConfig.MONGO_URI);
 
@@ -35,8 +54,8 @@ export class Server {
 
     // Global error handler
     this.app.use((err: any, req: any, res: any, next: any) => {
-      console.error('Global error handler:', err);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error("Global error handler:", err);
+      res.status(500).json({ error: "Internal server error" });
     });
 
     // Start server

@@ -18,7 +18,7 @@ export class AuthMiddleware {
                 return;
             }
 
-            const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+            const token = authHeader.substring(7);
 
             const payload = await this.jwtService.verifyToken(token);
 
@@ -28,7 +28,10 @@ export class AuthMiddleware {
             next();
         } catch (error) {
             console.error('Auth middleware error:', error);
-            res.status(401).json({ error: 'Invalid or expired token' });
+            res.status(401).json({ 
+                message: 'Invalid or expired token',
+                auth: false
+            });
         }
     };
 }

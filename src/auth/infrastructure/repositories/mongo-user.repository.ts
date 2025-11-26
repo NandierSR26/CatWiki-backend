@@ -5,6 +5,7 @@ import { UserId } from '../../domain/value-objects/user-id.js';
 import { UserModel } from '../models/user.model.js';
 
 export class MongoUserRepository implements UserRepository {
+
     async save(user: User): Promise<User> {
         const userPrimitives = user.toPrimitives();
 
@@ -99,7 +100,11 @@ export class MongoUserRepository implements UserRepository {
         return count > 0;
     }
 
-    async delete(id: UserId): Promise<void> {
-        await UserModel.findByIdAndDelete(id.value);
+    async checkAuthentication(id: UserId): Promise<User | null> {
+        const user = await this.findById(id);
+        if (user) {
+            return user;
+        }
+        return null;
     }
 }

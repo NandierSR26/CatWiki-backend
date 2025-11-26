@@ -9,6 +9,8 @@ export class AuthRoutes {
   ): Router {
     const router = Router();
 
+    router.get('/check-auth', authMiddleware.authenticate, authController.checkAuthentication);
+
     // Rutas públicas
     router.post('/register', authController.register);
     router.post('/login', authController.login);

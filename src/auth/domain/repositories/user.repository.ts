@@ -7,5 +7,5 @@ export interface UserRepository {
     findById(id: UserId): Promise<User | null>;
     findByEmail(email: UserEmail): Promise<User | null>;
     existsByEmail(email: UserEmail): Promise<boolean>;
-    delete(id: UserId): Promise<void>;
+    checkAuthentication(id: UserId): Promise<User | null>;
 }

@@ -7,12 +7,14 @@ import { InvalidCredentialsError } from '../../domain/errors/invalid-credentials
 import { InvalidUserEmailError } from '../../domain/errors/invalid-user-email.error.js';
 import { InvalidUserPasswordError } from '../../domain/errors/invalid-user-password.error.js';
 import { UserNotFoundError } from '../../domain/errors/user-not-found.error.js';
+import type { CheckAuthenticationUseCase } from '../../application/use-cases/check-authentication.use-case.js';
 
 export class AuthController {
     constructor(
         private readonly registerUserUseCase: RegisterUserUseCase,
         private readonly loginUserUseCase: LoginUserUseCase,
-        private readonly getUserByIdUseCase: GetUserByIdUseCase
+        private readonly getUserByIdUseCase: GetUserByIdUseCase,
+        private readonly checkAuthenticationUseCase: CheckAuthenticationUseCase
     ) { }
 
     register = async (req: Request, res: Response): Promise<void> => {
@@ -21,7 +23,7 @@ export class AuthController {
 
             if (!email || !password || !name) {
                 res.status(400).json({
-                    error: 'Email, password and name are required'
+                    message: 'Email, password and name are required'
                 });
                 return;
             }
@@ -33,7 +35,7 @@ export class AuthController {
             });
 
             res.status(201).json({
-                message: 'User registered successfully',
+                message: 'User registered successfully, sign in to continue',
                 user: {
                     id: user.id?.value,
                     email: user.email.value,
@@ -72,7 +74,6 @@ export class AuthController {
 
     getProfile = async (req: Request, res: Response): Promise<void> => {
         try {
-            // El userId viene del middleware de autenticación
             const userId = (req as any).userId;
 
             const user = await this.getUserByIdUseCase.execute(userId);
@@ -86,28 +87,52 @@ export class AuthController {
         }
     };
 
+    checkAuthentication = async (req: Request, res: Response): Promise<void> => {
+        try {
+            // El userId viene del middleware de autenticación
+            const userId = (req as any).userId;
+
+            const user = await this.checkAuthenticationUseCase.execute(userId);
+
+            if (user) {
+                res.status(200).json({
+                    message: 'User is authenticated',
+                    auth: true,
+                    user
+                });
+            } else {
+                res.status(401).json({
+                    message: 'User is not authenticated',
+                    auth: false
+                });
+            }
+        } catch (error) {
+            this.handleError(error, res);
+        }
+    };
+
     private handleError(error: unknown, res: Response): void {
         if (error instanceof UserAlreadyExistsError) {
-            res.status(409).json({ error: error.message });
+            res.status(409).json({ message: error.message });
             return;
         }
 
         if (error instanceof InvalidCredentialsError) {
-            res.status(401).json({ error: error.message });
+            res.status(401).json({ message: error.message });
             return;
         }
 
         if (error instanceof InvalidUserEmailError || error instanceof InvalidUserPasswordError) {
-            res.status(400).json({ error: error.message });
+            res.status(400).json({ message: error.message });
             return;
         }
 
         if (error instanceof UserNotFoundError) {
-            res.status(404).json({ error: error.message });
+            res.status(404).json({ message: error.message });
             return;
         }
 
         console.error('Unexpected error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error' });
     }
 }
