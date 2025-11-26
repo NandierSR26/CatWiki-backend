@@ -15,20 +15,18 @@ export class RegisterUserUseCase {
     async execute(dto: RegisterUserDto): Promise<User> {
         const email = new UserEmail(dto.email);
 
-        // Verificar si el usuario ya existe
         const existsUser = await this.userRepository.existsByEmail(email);
         if (existsUser) {
             throw new UserAlreadyExistsError(dto.email);
         }
 
-        // Hashear la contraseña
+        UserPassword.validate(dto.password);
+        
         const hashedPassword = await this.passwordHasher.hash(dto.password);
         const password = new UserPassword(hashedPassword);
 
-        // Crear el usuario
         const user = User.create(email, password, dto.name);
 
-        // Guardar en el repositorio y obtener el usuario con ID generado
         const savedUser = await this.userRepository.save(user);
 
         return savedUser;

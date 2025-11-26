@@ -9,6 +9,10 @@ export class UserPassword {
     }
 
     private ensureIsValidPassword(password: string): void {
+        UserPassword.validate(password);
+    }
+
+    static validate(password: string): void {
         if (!password || typeof password !== 'string') {
             throw new InvalidUserPasswordError('Password is required');
         }
@@ -21,7 +25,6 @@ export class UserPassword {
             throw new InvalidUserPasswordError(`Password must not exceed ${UserPassword.MAX_LENGTH} characters`);
         }
 
-        // Verificar que tenga al menos una letra minúscula, una mayúscula, un número y un carácter especial
         const hasLowerCase = /[a-z]/.test(password);
         const hasUpperCase = /[A-Z]/.test(password);
         const hasNumbers = /\d/.test(password);

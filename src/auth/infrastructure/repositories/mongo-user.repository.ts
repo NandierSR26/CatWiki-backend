@@ -9,54 +9,25 @@ export class MongoUserRepository implements UserRepository {
     async save(user: User): Promise<User> {
         const userPrimitives = user.toPrimitives();
 
-        if (userPrimitives.id) {
-            // Actualizar usuario existente
-            const updatedDoc = await UserModel.findByIdAndUpdate(
-                userPrimitives.id,
-                {
-                    email: userPrimitives.email,
-                    password: userPrimitives.password,
-                    name: userPrimitives.name,
-                    isActive: userPrimitives.isActive,
-                    updatedAt: userPrimitives.updatedAt
-                },
-                { new: true }
-            );
+        const newUserDoc = new UserModel({
+            email: userPrimitives.email,
+            password: userPrimitives.password,
+            name: userPrimitives.name,
+            isActive: userPrimitives.isActive
+        });
 
-            if (!updatedDoc) {
-                throw new Error('User not found for update');
-            }
+        const savedDoc = await newUserDoc.save();
 
-            return User.fromPrimitives({
-                id: updatedDoc._id.toString(),
-                email: updatedDoc.email,
-                password: updatedDoc.password,
-                name: updatedDoc.name,
-                isActive: updatedDoc.isActive,
-                createdAt: updatedDoc.createdAt,
-                updatedAt: updatedDoc.updatedAt
-            });
-        } else {
-            // Crear nuevo usuario
-            const newUserDoc = new UserModel({
-                email: userPrimitives.email,
-                password: userPrimitives.password,
-                name: userPrimitives.name,
-                isActive: userPrimitives.isActive
-            });
+        return User.fromPrimitives({
+            id: savedDoc._id.toString(),
+            email: savedDoc.email,
+            password: savedDoc.password,
+            name: savedDoc.name,
+            isActive: savedDoc.isActive,
+            createdAt: savedDoc.createdAt,
+            updatedAt: savedDoc.updatedAt
+        });
 
-            const savedDoc = await newUserDoc.save();
-
-            return User.fromPrimitives({
-                id: savedDoc._id.toString(),
-                email: savedDoc.email,
-                password: savedDoc.password,
-                name: savedDoc.name,
-                isActive: savedDoc.isActive,
-                createdAt: savedDoc.createdAt,
-                updatedAt: savedDoc.updatedAt
-            });
-        }
     }
 
     async findById(id: UserId): Promise<User | null> {
