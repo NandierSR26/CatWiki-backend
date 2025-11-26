@@ -13,8 +13,8 @@ export type { JwtService } from '../../auth/application/interfaces/jwt.service.i
 
 // Auth Infrastructure
 export { MongoUserRepository } from '../../auth/infrastructure/repositories/mongo-user.repository.js';
-export { BcryptPasswordHasher } from '../../auth/infrastructure/services/bcrypt-password-hasher.service.js';
-export { JsonWebTokenService } from '../../auth/infrastructure/services/jsonwebtoken.service.js';
+export { BcryptPasswordHasherAdapter } from '../../auth/infrastructure/adapters/bcrypt-password-hasher.adapter.js';
+export { JsonWebTokenAdapter } from '../../auth/infrastructure/adapters/jsonwebtoken.adapter.js';
 
 // Auth Presentation
 export { AuthController } from '../../auth/presentation/controllers/auth.controller.js';

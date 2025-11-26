@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { JsonWebTokenService } from '../jsonwebtoken.service.js';
+import { JsonWebTokenAdapter } from '../jsonwebtoken.adapter.js';
 
-describe('JsonWebTokenService', () => {
+describe('JsonWebTokenAdapter', () => {
     const secret = 'test-secret-key';
-    const jwtService = new JsonWebTokenService(secret);
+    const jwtService = new JsonWebTokenAdapter(secret);
 
     const testPayload = {
         userId: '507f1f77bcf86cd799439011',
@@ -47,7 +47,7 @@ describe('JsonWebTokenService', () => {
         });
 
         it('should throw error for token with wrong secret', async () => {
-            const differentService = new JsonWebTokenService('different-secret');
+            const differentService = new JsonWebTokenAdapter('different-secret');
             const token = await differentService.generateToken(testPayload);
 
             await expect(jwtService.verifyToken(token)).rejects.toThrow('Invalid token');

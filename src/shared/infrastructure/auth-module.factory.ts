@@ -1,7 +1,7 @@
 import { 
   MongoUserRepository, 
-  BcryptPasswordHasher, 
-  JsonWebTokenService,
+  BcryptPasswordHasherAdapter, 
+  JsonWebTokenAdapter,
   RegisterUserUseCase,
   LoginUserUseCase,
   GetUserByIdUseCase,
@@ -16,8 +16,8 @@ export class AuthModuleFactory {
   static create() {
     // Infrastructure
     const userRepository = new MongoUserRepository();
-    const passwordHasher = new BcryptPasswordHasher();
-    const jwtService = new JsonWebTokenService(
+    const passwordHasher = new BcryptPasswordHasherAdapter();
+    const jwtService = new JsonWebTokenAdapter(
       AppConfig.JWT_SECRET
     );
 

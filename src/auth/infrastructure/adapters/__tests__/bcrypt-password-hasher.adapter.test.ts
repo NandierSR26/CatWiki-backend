@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { BcryptPasswordHasher } from '../bcrypt-password-hasher.service.js';
+import { BcryptPasswordHasherAdapter } from '../bcrypt-password-hasher.adapter.js';
 
-describe('BcryptPasswordHasher', () => {
-    const passwordHasher = new BcryptPasswordHasher();
+describe('BcryptPasswordHasherAdapter', () => {
+    const passwordHasher = new BcryptPasswordHasherAdapter();
 
     describe('hash', () => {
         it('should hash password successfully', async () => {

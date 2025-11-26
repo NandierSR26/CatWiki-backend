@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { JwtPayload, JwtService } from '../../application/interfaces/jwt.service.interface.js';
 
-export class JsonWebTokenService implements JwtService {
+export class JsonWebTokenAdapter implements JwtService {
     constructor(
         private readonly secret: string,
     ) { }
